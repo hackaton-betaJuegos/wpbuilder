@@ -22,16 +22,19 @@
 
         <!--TitlePanel contiene el nombre de la aplicación y el título de la página-->
         <StackPanel x:Name="TitlePanel" Grid.Row="0" Margin="12,17,0,28">
-            <TextBlock x:Name="ApplicationTitle" Text="MY APPLICATION" Style="{StaticResource PhoneTextNormalStyle}"/>
-            <TextBlock x:Name="PageTitle" Text="page name" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
+            <TextBlock x:Name="ApplicationTitle" Text="UGame" Style="{StaticResource PhoneTextNormalStyle}"/>
+            <TextBlock x:Name="PageTitle" Text="apps!" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
         </StackPanel>
 
         <!--ContentPanel. Colocar aquí el contenido adicional-->
         <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
             
             <!--Cree un único botón para navegar a la segunda página, que se representa con XNA Framework-->
-            <Button Height="100" Content="Change to game page" Click="Button_Click" />
-            
+            <Button Height="100" Content="Play!" Click="Button_Click" Margin="0,187,0,364" />
+            <Button Height="100" Content="Build!" Click="Button_Click_1" Margin="0,82,0,469" />
+            <Button Height="100" Content="Send!" HorizontalAlignment="Left" Margin="0,292,0,0" VerticalAlignment="Top" Width="456" Click="Button_Click_2"/>
+            <Button Height="100" Content="Download!" HorizontalAlignment="Left" Margin="0,397,0,0" VerticalAlignment="Top" Width="456" Click="Button_Click_3"/>
+
         </Grid>
     </Grid>
  

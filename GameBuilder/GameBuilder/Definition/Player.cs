@@ -14,7 +14,8 @@ namespace GameBuilder.Definition
        
         public Player(GraphicsDevice device, int blocksize)
         {
-            Texture = ColorTextureCreator.Create(device, blocksize, blocksize, Color.DarkGoldenrod);
+            //Texture = ColorTextureCreator.Create(device, blocksize, blocksize, Color.DarkGoldenrod);
+            Texture = (App.Current as App).Content.Load<Texture2D>("Berlus");
         }
     }
 }

@@ -33,7 +33,7 @@ namespace GameBuilder
         SpriteBatch spriteBatch;
         public static GameDefinition Definition { get; set; }
 
-        const int blockSize = 20;
+        const int blockSize = 30;
         int rows;
         int columns;
         int currentX;
@@ -49,9 +49,11 @@ namespace GameBuilder
         double playerYdiff = 0;
         double flyingStart;
         bool isFlying;
-        double jumpSpeed = 100;
+        double jumpSpeed = 200;
         int isJump = 0;
         bool dead;
+        bool justNavigated = false;
+        double startTime;
         public GamePage()
         {
             InitializeComponent();
@@ -60,15 +62,15 @@ namespace GameBuilder
             contentManager = (Application.Current as App).Content;
 
             // Crear un temporizador para esta página
-            
-        }
-
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
             timer = new GameTimer();
             timer.UpdateInterval = TimeSpan.FromTicks(333333);
             timer.Update += OnUpdate;
             timer.Draw += OnDraw;
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            justNavigated = true;
 
             // Establecer el modo de uso compartido del dispositivo gráfico para que active una representación de XNA
             SharedGraphicsDeviceManager.Current.GraphicsDevice.SetSharingMode(true);
@@ -93,8 +95,8 @@ namespace GameBuilder
 
             currentX = 0;
 
-            GoodBlock = ColorTextureCreator.Create(SharedGraphicsDeviceManager.Current.GraphicsDevice, 20, 20, Color.Black);
-            BadBlock = ColorTextureCreator.Create(SharedGraphicsDeviceManager.Current.GraphicsDevice, 20, 20, Color.Red);
+            GoodBlock = ColorTextureCreator.Create(SharedGraphicsDeviceManager.Current.GraphicsDevice,blockSize, blockSize, Color.Black);
+            BadBlock = ColorTextureCreator.Create(SharedGraphicsDeviceManager.Current.GraphicsDevice,blockSize, blockSize, Color.Red);
 
             Blocks = Definition.Blocks.Select(x => new GameBuilder.Definition.Block(x)).ToList();
             isFlying = false;
@@ -121,14 +123,19 @@ namespace GameBuilder
                 && (x.Y * blockSize).Between(currentY, currentY + height + blockSize);
         }
 
-        void UpdateX(TimeSpan TotalTime)
+        void UpdateX(GameTimerEventArgs e)
         {
             double x;
-            double ellapsed = TotalTime.TotalMilliseconds / 1000;
+            double ellapsed = Runtime(e) / 1000;
 
             x = Definition.Speed * ellapsed + Math.Pow(ellapsed, 2) * Definition.Acceleration / 2;
 
             currentX = (int)x;
+        }
+
+        double Runtime(GameTimerEventArgs e)
+        {
+            return e.TotalTime.TotalMilliseconds - startTime;
         }
 
         bool jumpStart;
@@ -139,6 +146,13 @@ namespace GameBuilder
         /// </summary>
         private void OnUpdate(object sender, GameTimerEventArgs e)
         {
+            if (justNavigated)
+            {
+                justNavigated = false;
+                startTime = e.TotalTime.TotalMilliseconds;
+            }
+
+
             if (dead)
                 return;
 
@@ -151,7 +165,16 @@ namespace GameBuilder
                 isJump = 1;
             }
 
-            UpdateX(e.TotalTime);
+            UpdateX(e);
+
+            if (currentX > Definition.FinalX * blockSize)
+            {
+                Dispatcher.BeginInvoke(() => MessageBox.Show("You won!!!!!"));
+                timer.Stop();
+                dead = true;
+                Dispatcher.BeginInvoke(() => NavigationService.GoBack());
+                return;
+            }
 
             if (CheckCollision())
             {
@@ -161,14 +184,14 @@ namespace GameBuilder
 
             if (isFlying)
             {
-                double flyingTime = e.TotalTime.TotalMilliseconds - flyingStart;
+                double flyingTime = Runtime(e) -flyingStart;
 
                 if(jumpStart)
                     jumpStart = playerYdiff / blockSize < 1;
 
                 if (!jumpStart && BlockUnderPlayer())
                 {
-                    player.Y += (int)(playerYdiff / blockSize);
+                    player.Y += (int)Math.Round(playerYdiff / blockSize);
                     playerYdiff = 0;
                     isFlying = false;
                     isJump = 0;
@@ -182,7 +205,7 @@ namespace GameBuilder
                 {
                     isJump = 0;
                     isFlying = true;
-                    flyingStart = e.TotalTime.TotalMilliseconds;
+                    flyingStart = Runtime(e);
                 }
             }
 
@@ -231,7 +254,7 @@ namespace GameBuilder
             Vector2 vPlayer = new Vector2(player.X * blockSize, (float)(height - ((player.Y + 1) * blockSize + playerYdiff)));
             
             spriteBatch.Begin();
-            spriteBatch.Draw(player.Texture, vPlayer, Color.White);
+            spriteBatch.Draw(player.Texture, new Microsoft.Xna.Framework.Rectangle((int)vPlayer.X, (int)vPlayer.Y, blockSize, blockSize), Color.White);
 
             foreach (var block in Blocks.Where(x => InViewport(x)))
             {

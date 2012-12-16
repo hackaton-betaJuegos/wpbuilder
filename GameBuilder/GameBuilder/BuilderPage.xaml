@@ -1,5 +1,5 @@
 ﻿<phone:PhoneApplicationPage 
-    x:Class="GameBuilder.GamePage"
+    x:Class="GameBuilder.BuilderPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
@@ -9,10 +9,15 @@
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
-    SupportedOrientations="Landscape" Orientation="Portrait"
+    SupportedOrientations="Landscape" Orientation="Landscape"
     mc:Ignorable="d" d:DesignHeight="800" d:DesignWidth="480"
     shell:SystemTray.IsVisible="False">
-    
+   
     <!--No se necesita contenido XAML porque la página se va a representar en su totalidad con XNA Framework-->
+    <Grid x:Name="LayoutRoot">
+        <Button x:Name="GoodBlock" Content="Good" HorizontalAlignment="Left" VerticalAlignment="Top" Click="GoodBlock_Click_1"/>
+        <Button x:Name="Bad" Content="Bad" HorizontalAlignment="Left" Margin="0,69,0,0" VerticalAlignment="Top" Click="Bad_Click_1"/>
+        <Button x:Name="Done" Content="Done" HorizontalAlignment="Left" Margin="674,0,0,0" VerticalAlignment="Top" Click="Done_Click_1"/>
 
+    </Grid>
 </phone:PhoneApplicationPage>

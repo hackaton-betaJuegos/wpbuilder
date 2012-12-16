@@ -7,8 +7,8 @@ namespace GameBuilder.Definition
 {
     public class BlockJson
     {
-        public int X { get; set; }
-        public int Y { get; set; }
+        public long X { get; set; }
+        public long Y { get; set; }
         public BlockType Type { get; set; }
     }
 
@@ -22,6 +22,8 @@ namespace GameBuilder.Definition
             this.Y = origin.Y;
             this.Type = origin.Type;
         }
+
+        public Block() { }
     }
 
     public enum BlockType

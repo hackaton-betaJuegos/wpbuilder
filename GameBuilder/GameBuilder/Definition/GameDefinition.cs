@@ -14,5 +14,6 @@ namespace GameBuilder.Definition
         public double Acceleration { get; set; }
         public long InitialX { get; set; }
         public long InitialY { get; set; }
+        public long FinalX { get; set; }
     }
 }
